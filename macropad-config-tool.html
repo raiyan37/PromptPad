@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3x3 Macropad Configurator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        h1 {
+            text-align: center;
+            color: #4a5568;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            font-weight: 300;
+        }
+
+        .macropad-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            max-width: 400px;
+            margin: 0 auto 40px;
+            padding: 30px;
+            background: #2d3748;
+            border-radius: 15px;
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .key-button {
+            aspect-ratio: 1;
+            background: linear-gradient(145deg, #4a5568, #2d3748);
+            border: none;
+            border-radius: 12px;
+            color: #e2e8f0;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .key-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+            background: linear-gradient(145deg, #5a6578, #3d4758);
+        }
+
+        .key-button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .key-button.selected {
+            background: linear-gradient(145deg, #48bb78, #38a169);
+            box-shadow: 0 0 20px rgba(72, 187, 120, 0.5);
+        }
+
+        .config-panel {
+            background: #f7fafc;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .config-panel.active {
+            border-color: #48bb78;
+            box-shadow: 0 0 20px rgba(72, 187, 120, 0.2);
+        }
+
+        .config-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            gap: 15px;
+        }
+
+        .key-preview {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(145deg, #4a5568, #2d3748);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #4a5568;
+            font-size: 14px;
+        }
+
+        input[type="text"], textarea, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        input[type="text"]:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #48bb78;
+            box-shadow: 0 0 0 3px rgba(72, 187, 120, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        .macro-type-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .type-btn {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #e2e8f0;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .type-btn.active {
+            background: #48bb78;
+            color: white;
+            border-color: #48bb78;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            color: white;
+            box-shadow: 0 4px 12px rgba(72, 187, 120, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(72, 187, 120, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .help-text {
+            font-size: 12px;
+            color: #718096;
+            margin-top: 5px;
+        }
+
+        .preview-area {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            min-height: 100px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>3x3 Macropad Configurator</h1>
+        
+        <div class="macropad-grid">
+            <button class="key-button" data-key="0">Key 1</button>
+            <button class="key-button" data-key="1">Key 2</button>
+            <button class="key-button" data-key="2">Key 3</button>
+            <button class="key-button" data-key="3">Key 4</button>
+            <button class="key-button" data-key="4">Key 5</button>
+            <button class="key-button" data-key="5">Key 6</button>
+            <button class="key-button" data-key="6">Key 7</button>
+            <button class="key-button" data-key="7">Key 8</button>
+            <button class="key-button" data-key="8">Key 9</button>
+        </div>
+
+        <div id="config-panel" class="config-panel">
+            <div class="config-header">
+                <div class="key-preview" id="key-preview">1</div>
+                <h3 id="config-title">Configure Key 1</h3>
+            </div>
+
+            <div class="form-group">
+                <label>Macro Type:</label>
+                <div class="macro-type-buttons">
+                    <div class="type-btn active" data-type="text">Text</div>
+                    <div class="type-btn" data-type="shortcut">Shortcut</div>
+                    <div class="type-btn" data-type="custom">Custom</div>
+                </div>
+            </div>
+
+            <div class="form-group" id="text-config">
+                <label for="text-input">Text to type:</label>
+                <textarea id="text-input" placeholder="Enter the text you want this key to type..."></textarea>
+                <div class="help-text">This text will be typed when you press the key</div>
+            </div>
+
+            <div class="form-group" id="shortcut-config" style="display: none;">
+                <label for="shortcut-select">Choose shortcut:</label>
+                <select id="shortcut-select">
+                    <option value="ctrl+c">Copy (Ctrl+C)</option>
+                    <option value="ctrl+v">Paste (Ctrl+V)</option>
+                    <option value="ctrl+x">Cut (Ctrl+X)</option>
+                    <option value="ctrl+z">Undo (Ctrl+Z)</option>
+                    <option value="ctrl+y">Redo (Ctrl+Y)</option>
+                    <option value="ctrl+s">Save (Ctrl+S)</option>
+                    <option value="ctrl+a">Select All (Ctrl+A)</option>
+                    <option value="alt+tab">Alt+Tab</option>
+                    <option value="ctrl+shift+esc">Task Manager</option>
+                    <option value="win+d">Show Desktop</option>
+                    <option value="win+l">Lock PC</option>
+                </select>
+            </div>
+
+            <div class="form-group" id="custom-config" style="display: none;">
+                <label for="custom-input">Custom QMK code:</label>
+                <textarea id="custom-input" placeholder="SEND_STRING(SS_LCTL(&quot;c&quot;));"></textarea>
+                <div class="help-text">Enter raw QMK macro code for advanced users</div>
+            </div>
+
+            <div class="form-group">
+                <label for="key-label">Key Label:</label>
+                <input type="text" id="key-label" placeholder="Short label for the key">
+                <div class="help-text">This will be displayed on the key (keep it short)</div>
+            </div>
+        </div>
+
+        <div class="buttons">
+            <button class="btn btn-primary" onclick="generateCode()">Generate QMK Code</button>
+            <button class="btn btn-primary" onclick="downloadKeymap()">Download keymap.c</button>
+            <button class="btn btn-secondary" onclick="saveConfig()">Save Configuration</button>
+            <button class="btn btn-secondary" onclick="loadConfig()">Load Configuration</button>
+        </div>
+
+        <div class="preview-area" id="code-preview" style="display: none;"></div>
+    </div>
+
+    <script>
+        let selectedKey = 0;
+        let macroConfig = {
+            0: { type: 'text', value: '', label: 'Key 1' },
+            1: { type: 'text', value: '', label: 'Key 2' },
+            2: { type: 'text', value: '', label: 'Key 3' },
+            3: { type: 'text', value: '', label: 'Key 4' },
+            4: { type: 'text', value: '', label: 'Key 5' },
+            5: { type: 'text', value: '', label: 'Key 6' },
+            6: { type: 'text', value: '', label: 'Key 7' },
+            7: { type: 'text', value: '', label: 'Key 8' },
+            8: { type: 'text', value: '', label: 'Key 9' }
+        };
+
+        // Key selection
+        document.querySelectorAll('.key-button').forEach((button, index) => {
+            button.addEventListener('click', () => {
+                selectKey(index);
+            });
+        });
+
+        // Macro type selection
+        document.querySelectorAll('.type-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                const type = btn.dataset.type;
+                showConfigForType(type);
+                macroConfig[selectedKey].type = type;
+            });
+        });
+
+        // Input handlers
+        document.getElementById('text-input').addEventListener('input', (e) => {
+            macroConfig[selectedKey].value = e.target.value;
+        });
+
+        document.getElementById('shortcut-select').addEventListener('change', (e) => {
+            macroConfig[selectedKey].value = e.target.value;
+        });
+
+        document.getElementById('custom-input').addEventListener('input', (e) => {
+            macroConfig[selectedKey].value = e.target.value;
+        });
+
+        document.getElementById('key-label').addEventListener('input', (e) => {
+            macroConfig[selectedKey].label = e.target.value;
+            updateKeyButton(selectedKey);
+        });
+
+        function selectKey(keyIndex) {
+            selectedKey = keyIndex;
+            
+            // Update visual selection
+            document.querySelectorAll('.key-button').forEach(btn => btn.classList.remove('selected'));
+            document.querySelectorAll('.key-button')[keyIndex].classList.add('selected');
+            
+            // Update config panel
+            document.getElementById('key-preview').textContent = keyIndex + 1;
+            document.getElementById('config-title').textContent = `Configure Key ${keyIndex + 1}`;
+            document.getElementById('config-panel').classList.add('active');
+            
+            // Load current config
+            const config = macroConfig[keyIndex];
+            
+            // Set type
+            document.querySelectorAll('.type-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.type === config.type);
+            });
+            showConfigForType(config.type);
+            
+            // Set values
+            document.getElementById('text-input').value = config.type === 'text' ? config.value : '';
+            document.getElementById('shortcut-select').value = config.type === 'shortcut' ? config.value : 'ctrl+c';
+            document.getElementById('custom-input').value = config.type === 'custom' ? config.value : '';
+            document.getElementById('key-label').value = config.label;
+        }
+
+        function showConfigForType(type) {
+            document.getElementById('text-config').style.display = type === 'text' ? 'block' : 'none';
+            document.getElementById('shortcut-config').style.display = type === 'shortcut' ? 'block' : 'none';
+            document.getElementById('custom-config').style.display = type === 'custom' ? 'block' : 'none';
+        }
+
+        function updateKeyButton(keyIndex) {
+            const button = document.querySelectorAll('.key-button')[keyIndex];
+            const config = macroConfig[keyIndex];
+            button.textContent = config.label || `Key ${keyIndex + 1}`;
+        }
+
+        function convertToQMKCode(config) {
+            switch (config.type) {
+                case 'text':
+                    return `SEND_STRING("${config.value.replace(/"/g, '\\"')}");`;
+                case 'shortcut':
+                    const shortcuts = {
+                        'ctrl+c': 'SEND_STRING(SS_LCTL("c"));',
+                        'ctrl+v': 'SEND_STRING(SS_LCTL("v"));',
+                        'ctrl+x': 'SEND_STRING(SS_LCTL("x"));',
+                        'ctrl+z': 'SEND_STRING(SS_LCTL("z"));',
+                        'ctrl+y': 'SEND_STRING(SS_LCTL("y"));',
+                        'ctrl+s': 'SEND_STRING(SS_LCTL("s"));',
+                        'ctrl+a': 'SEND_STRING(SS_LCTL("a"));',
+                        'alt+tab': 'SEND_STRING(SS_LALT(SS_TAP(X_TAB)));',
+                        'ctrl+shift+esc': 'SEND_STRING(SS_LCTL(SS_LSFT(SS_TAP(X_ESC))));',
+                        'win+d': 'SEND_STRING(SS_LGUI("d"));',
+                        'win+l': 'SEND_STRING(SS_LGUI("l"));'
+                    };
+                    return shortcuts[config.value] || 'SEND_STRING("");';
+                case 'custom':
+                    return config.value || 'SEND_STRING("");';
+                default:
+                    return 'SEND_STRING("");';
+            }
+        }
+
+        function generateCode() {
+            let code = `#include QMK_KEYBOARD_H
+
+// Custom keycodes
+enum custom_keycodes {
+    MACRO1 = SAFE_RANGE,
+    MACRO2,
+    MACRO3,
+    MACRO4,
+    MACRO5,
+    MACRO6,
+    MACRO7,
+    MACRO8,
+    MACRO9
+};
+
+const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
+    [0] = LAYOUT_ortho_3x3(
+        MACRO1, MACRO2, MACRO3,
+        MACRO4, MACRO5, MACRO6,
+        MACRO7, MACRO8, MACRO9
+    )
+};
+
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {`;
+
+            for (let i = 0; i < 9; i++) {
+                const config = macroConfig[i];
+                const qmkCode = convertToQMKCode(config);
+                code += `
+        case MACRO${i + 1}: // ${config.label}
+            if (record->event.pressed) {
+                ${qmkCode}
+            }
+            break;`;
+            }
+
+            code += `
+    }
+    return true;
+}`;
+
+            document.getElementById('code-preview').style.display = 'block';
+            document.getElementById('code-preview').textContent = code;
+        }
+
+        function downloadKeymap() {
+            generateCode();
+            const code = document.getElementById('code-preview').textContent;
+            const blob = new Blob([code], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'keymap.c';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function saveConfig() {
+            const configJson = JSON.stringify(macroConfig, null, 2);
+            const blob = new Blob([configJson], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'macropad_config.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function loadConfig() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        try {
+                            macroConfig = JSON.parse(e.target.result);
+                            // Update all key buttons
+                            for (let i = 0; i < 9; i++) {
+                                updateKeyButton(i);
+                            }
+                            // Refresh current selection
+                            selectKey(selectedKey);
+                        } catch (err) {
+                            alert('Error loading configuration file');
+                        }
+                    };
+                    reader.readAsText(file);
+                }
+            };
+            input.click();
+        }
+
+        // Initialize
+        selectKey(0);
+    </script>
+</body>
+</html>

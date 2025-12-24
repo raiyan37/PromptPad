@@ -4,9 +4,8 @@ A 3×3 mechanical macropad built around a Pro Micro (ATmega32u4) running QMK. Th
 
 ## Video Demonstration
 
-Links: 
-https://youtube.com/shorts/4B8f0nyeBfY?feature=share
-https://youtu.be/FJb8W2D7UVc
+Physical: https://youtube.com/shorts/4B8f0nyeBfY?feature=share
+Software: https://youtu.be/FJb8W2D7UVc
 
 
 ![Enclosure CAD render](./assets/enclosure-render.png)

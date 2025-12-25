@@ -1,5 +1,5 @@
 {
-    "manufacturer": "Sunny",
+    "manufacturer": "Raiyan",
     "keyboard_name": "macropad_v2",
     "maintainer": "s-l893",
     "development_board": "promicro",
@@ -35,4 +35,5 @@
             ]
         }
     }
+
 }

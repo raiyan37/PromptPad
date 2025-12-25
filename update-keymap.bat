@@ -3,7 +3,7 @@ title Macropad Auto-Watcher - Monitoring Downloads...
 
 REM Set your paths here - CHANGE THESE TO MATCH YOUR SYSTEM
 set "DOWNLOADS_PATH=%USERPROFILE%\Downloads"
-set "QMK_KEYMAP_PATH=C:\Users\sunny\qmk_firmware\keyboards\macropad_v2\keymaps\default"
+set "QMK_KEYMAP_PATH=C:\Users\raiyan\qmk_firmware\keyboards\macropad_v2\keymaps\default"
 
 echo ==========================================
 echo    Macropad Auto-Watcher ACTIVE
@@ -105,3 +105,4 @@ echo Continuing to monitor for new keymap files...
 echo.
 
 goto MONITOR_LOOP
+

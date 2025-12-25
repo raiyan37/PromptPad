@@ -80,7 +80,7 @@ del "%DOWNLOADS_PATH%\keymap.c"
 REM Auto-compile option
 echo.
 echo Auto-compiling firmware...
-cd /d "C:\Users\sunny\qmk_firmware"
+cd /d "C:\Users\raiyan\qmk_firmware"
 qmk compile -kb macropad_v2 -km default
 
 if errorlevel 1 (
@@ -103,4 +103,5 @@ REM qmk flash -kb macropad_v2 -km default
 
 echo Continuing to monitor for new keymap files...
 echo.
+
 goto MONITOR_LOOP
